@@ -1,96 +1,163 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom"; 
 import Navbar from "../components/navbar";
 import Axios from "axios";
-
 import Footer from "../components/footer";
 import LoginDetails from "../context/LoginContext";
-
 import logo from "../assets/imgs/logo.png";
 import "../assets/css/form.css";
 
 const Login = () => {
-	const { setUser, baseURL } = useContext(LoginDetails);
-	const [credentials, setCredentials] = useState({});
+	const navigate = useNavigate();
+	const { setUser } = useContext(LoginDetails);
+	const BASE_URL = process.env.REACT_APP_BASE_URL;
+
+	const [searchParams] = useSearchParams();
+	const selectedRole = searchParams.get("role") || "patient"; // Default to "patient"
+
+	const [credentials, setCredentials] = useState({ email: "", password: "", role: selectedRole });
+	const [error, setError] = useState("");
+
+	// Ensure role is set from query parameter or default value
+	useEffect(() => {
+		setCredentials((prev) => ({ ...prev, role: selectedRole }));
+	}, [selectedRole]);
 
 	const onFormSubmit = async (event) => {
 		event.preventDefault();
-		await Axios.post(`${baseURL}/user/login`, credentials)
-			.then(({ data }) => {
-				console.info(data);
-				localStorage.setItem("user", JSON.stringify(data));
-				setUser(data.user);
-				window.location.href = "/appointmentpage";
-			})
-			.catch((error) => {
-				var incCredentials = document.getElementById(
-					"Incorrect-credentials"
-				);
-				incCredentials.style.display = "block";
-			})
-			.finally(() => {
-				console.info("Login API call finished.");
-			});
+		setError(""); // Reset error message
+	
+		if (!credentials.email || !credentials.password) {
+			setError("All fields are required!");
+			return;
+		}
+		
+		try {
+			console.log("credentialscredentials",credentials);
+			console.log(BASE_URL)
+			const response = await Axios.post(`${BASE_URL}/user/login`, credentials).then(res=>{
+				console.log(res);
+				const data = res.data;
+			console.log("data",data);
+	
+			console.info("Login Response:", data);
+	
+			if (!data.user || !data.user.role) {
+				setError("Invalid response from server.");
+				return;
+			}
+	
+			// Store user data and token in localStorage
+			localStorage.setItem("user", JSON.stringify(data.user));
+			localStorage.setItem("token", data.accessToken);
+			setUser(data.user);
+			console.log(data)
+			console.log(data.user)
+			console.log(data.user.role)
+			// Redirect based on role
+			if (data.user.role === "admin") {
+				navigate("/admin"); // Admin Dashboard
+			} else if (data.user.role === "patient") {
+				navigate("/patient"); // Patient Dashboard
+			} else {
+				setError("Unauthorized user role!");
+			}
+			}).catch((err)=>{
+				console.log("Error",err);
+				}
+			);
+			
+		} catch (error) {
+			console.error("Login Error:", error);
+	
+			if (error.response) {
+				if (error.response.status === 401) {
+					setError("Incorrect Email or Password!");
+				} else if (error.response.status === 404) {
+					setError("User not found. Please sign up.");
+				} else {
+					setError("Something went wrong! Please try again.");
+				}
+			} else if (error.request) {
+				setError("Server is not responding. Please try again later.");
+			} else {
+				setError("An unexpected error occurred.");
+			}
+		}
 	};
+	
 
 	const toSignUp = () => {
-		window.location.href = "/signup";
+		navigate("/signup");
 	};
 
 	return (
 		<React.Fragment>
-			<div id={"super-container"}>
+			<div id="super-container">
 				<Navbar />
-				<div className={"parent-container"}>
-					<form id={"login-container"}>
-						<img src={logo} alt={"Health Insurance"} />
-						<div className={"input-container"}>
-							<i className={"fa fa-envelope icon"}></i>
+				<div className="parent-container">
+					<form id="login-container" onSubmit={onFormSubmit}>
+						<img src={logo} alt="Health Insurance" />
+						{/* <h2>{selectedRole ? `${selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1)} Login` : "Login"}</h2> */}
+
+						{/* Role Selection */}
+						<div className="input-container">
+							<i className="fa fa-user-tag icon"></i>
+							<select
+								className="logininput"
+								value={credentials.role}
+								onChange={(e) =>
+									setCredentials({ ...credentials, role: e.target.value })
+								}
+							>
+								<option value="patient">Patient</option>
+								<option value="admin">Admin</option>
+							</select>
+						</div>
+
+						{/* Email Input */}
+						<div className="input-container">
+							<i className="fa fa-envelope icon"></i>
 							<input
-								className={"logininput"}
-								type={"email"}
-								name={"email"}
-								placeholder={"Email *"}
+								className="logininput"
+								type="email"
+								name="email"
+								placeholder="Email *"
 								required
-								onChange={(e) => {
-									setCredentials({
-										...credentials,
-										email: e.target.value,
-									});
-								}}
+								value={credentials.email}
+								onChange={(e) =>
+									setCredentials({ ...credentials, email: e.target.value })
+								}
 							/>
 						</div>
+
+						{/* Password Input */}
 						<div className="input-container">
 							<i className="fa fa-lock icon"></i>
 							<input
-								className={"logininput"}
-								type={"password"}
-								name={"password"}
-								placeholder={"Password *"}
+								className="logininput"
+								type="password"
+								name="password"
+								placeholder="Password *"
 								required
-								onChange={(e) => {
-									setCredentials({
-										...credentials,
-										password: e.target.value,
-									});
-								}}
+								value={credentials.password}
+								onChange={(e) =>
+									setCredentials({ ...credentials, password: e.target.value })
+								}
 							/>
 						</div>
-						<div id={"Incorrect-credentials"}>
-							Incorrect Email or Password!
-						</div>
-						<button
-							id={"submit"}
-							type={"submit"}
-							onClick={onFormSubmit}>
+
+						{/* Error Message */}
+						{error && <div id="Incorrect-credentials">{error}</div>}
+
+						{/* Submit Button */}
+						<button id="submit" type="submit">
 							Login
 						</button>
-						<span className={"spantext"}>
-							Doesn't have one, Create here.
-						</span>
-						<button
-							id={"lastbtn"}
-							type={"button"}
-							onClick={toSignUp}>
+
+						{/* Sign Up Link */}
+						<span className="spantext">Don't have an account? Create one.</span>
+						<button id="lastbtn" type="button" onClick={toSignUp}>
 							Sign Up
 						</button>
 					</form>

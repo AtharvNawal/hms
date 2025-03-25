@@ -5,13 +5,13 @@ const Footer = () => {
 		<footer>
 			<div className={"footer"} id={"footer"}>
 				<span className={"footer-left"}>
-					&copy; 2021 HOSPITAL All Rights Reserved
+					&copy; 2025 HOSPITAL All Rights Reserved
 				</span>
 				<ul className={"footer-right"}>
 					<li>
 						{/* eslint-disable-next-line */}
 						<a
-							href="https://twitter.com/who?lang=en"
+							// href="https://twitter.com/who?lang=en"
 							target="_blank"
 							aria-label="Twitter">
 							<i className={"fab fa-twitter foot-icon"}></i>
@@ -20,7 +20,7 @@ const Footer = () => {
 					<li>
 						{/* eslint-disable-next-line */}
 						<a
-							href="https://www.facebook.com/WHO/"
+							// href="https://www.facebook.com/WHO/"
 							target="_blank"
 							aria-label="Facebook">
 							<i className={"fab fa-facebook-f foot-icon"}></i>
@@ -29,7 +29,7 @@ const Footer = () => {
 					<li>
 						{/* eslint-disable-next-line */}
 						<a
-							href="https://www.instagram.com/who/?hl=en"
+							// href="https://www.instagram.com/who/?hl=en"
 							target="_blank"
 							aria-label="Instagram">
 							<i className={"fab fa-instagram foot-icon"}></i>
@@ -39,7 +39,7 @@ const Footer = () => {
 			</div>
 			<div className={"footer-bottom"}>
 				<span className={"footer-bottom-text"}>
-					Designed by Jitesh Prajapat &amp; Aarav Mishra
+					Designed by Group 3
 				</span>
 			</div>
 		</footer>

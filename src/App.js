@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import {
 	BrowserRouter as Router,
-	Redirect,
 	Route,
-	Switch,
+	Routes,
+	Navigate,
 } from "react-router-dom";
 
 import { BASE_URL } from "./config/base";
@@ -13,6 +13,22 @@ import Login from "./containers/Login";
 import LoginDetails from "./context/LoginContext";
 import HomePage from "./components/Home";
 import Signup from "./containers/Signup";
+import AboutUs from "./components/AboutUs";
+import AdminDashboard from "./components/AdminDashboard";
+
+
+// import React from 'react';
+// import AdminDashboard from './AdminDashboard';
+// import './AdminDashboard.css';
+
+// function App() {
+//   return (
+//     <div className="App">
+//       <AdminDashboard />
+//     </div>
+//   );
+// }
+
 
 const App = () => {
 	const [user, setUser] = useState({});
@@ -25,40 +41,25 @@ const App = () => {
 			setUser(JSON.parse(savedUser).user);
 			setLoggedIn(true);
 		}
-		// eslint-disable-next-line
-	}, []);
+	}, [loggedIn]);
 
 	return (
 		<LoginDetails.Provider value={{ loggedIn, user, setUser, baseURL }}>
 			<Router>
-				<div>
-					<Switch>
-						<Route path={"/"} exact>
-							<HomePage />
-						</Route>
-						<Route path={"/login"}>
-							<Login />
-						</Route>
-						<Route path={"/signup"}>
-							<Signup />
-						</Route>
-						<Route path={"/appointments"}>
-							<BookAppointments />
-						</Route>
-						<Route path={"/appointmentpage"}>
-							<LandingPage />
-						</Route>
-						<Route path={"/about-us"}>
-							<Redirect to={"/#about-us"} />
-						</Route>
-						<Route path={"/404"}>
-							<h1>Page not found</h1>
-						</Route>
-						<Route path={"/**"}>
-							<Redirect to={"/404"} />
-						</Route>
-					</Switch>
-				</div>
+				<Routes>
+					<Route path="/" element={<HomePage />} />
+					<Route path="/login" element={<Login />} />
+					<Route path="/signup" element={<Signup />} />
+					<Route path="/appointments" element={<BookAppointments />} />
+					<Route path="/appointmentpage" element={<LandingPage />} />
+					<Route path="/about-us" element={<AboutUs />} />
+					<Route path="/patient" element={<LandingPage />} />
+					<Route path="/admin" element={<AdminDashboard />} />
+
+					{/* 404 Page Not Found */}
+					<Route path="/404" element={<h1>Page not found</h1>} />
+					<Route path="*" element={<Navigate to="/404" />} />
+				</Routes>
 			</Router>
 		</LoginDetails.Provider>
 	);

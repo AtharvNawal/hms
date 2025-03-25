@@ -59,7 +59,7 @@ const HomePage = () => {
 			</div>
 			<div id={"book-appointment"}>
 				<h4 id={"book-apt-head"}>
-					Its hassle free, book an appointment with our system online!
+					Its hassle free! book an appointment with our system online!
 				</h4>
 				<button id={"book-btn"} onClick={onAppointmentBook}>
 					Login to Book

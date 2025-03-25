@@ -42,9 +42,9 @@ body {
 }
 .nav-head {
 	cursor: pointer;
-	font-size: 4rem;
+	font-size: 2rem;
 	text-transform: uppercase;
-	letter-spacing: 6px;
+	letter-spacing: 5px;
 	color: #fff;
 	font-family: "Patrick Hand", cursive;
 }
@@ -211,9 +211,9 @@ body {
 		transform: translateX(0);
 	}
 }
-header {
+/*header {
 	animation: 0.75s ease-out 0s 1 slideInFromLeft;
-}
+}*/
 
 #book-appointment {
 	min-height: 25vh;

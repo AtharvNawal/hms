@@ -17,8 +17,15 @@ const LandingPage = () => {
 	useEffect(() => {
 		if (loggedIn) {
 			setLoading(true);
+			const ud = localStorage.getItem("user")
+			let userData = JSON.parse(ud)
+			console.log(userData)
 			const fetchAppointments = async () => {
-				await Axios.get(`${baseURL}/user/getApt/${user._id}`)
+				await Axios.get(`http://localhost:5001/user/getApt/${user._id}`, {
+					headers: {
+						authorization: `Bearer ${userData.accessToken}`		
+								}
+				})
 					.then(({ data: foundAppointments }) => {
 						console.info(
 							`Appointments were found for user with name:${user.name}`
