@@ -15,6 +15,9 @@ const LandingPage = () => {
 	const [loading, setLoading] = useState(false);
 
 	const ud = localStorage.getItem("user");
+
+	const BASE_URL = process.env.REACT_APP_BASE_URL;
+
 	let userData = JSON.parse(ud);
 	useEffect(() => {
 		const accessToken = localStorage.getItem("token")
@@ -31,7 +34,7 @@ const LandingPage = () => {
 			const fetchAppointments = async () => {
 				try {
 					const { data: foundAppointments } = await Axios.get(
-						`http://localhost:5001/user/getApt/${userData._id}`, 
+						`${BASE_URL}/user/getApt/${userData._id}`, 
 						{
 							headers: { authorization: `Bearer ${accessToken}` }
 						}
