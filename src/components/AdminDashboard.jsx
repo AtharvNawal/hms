@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import './AdminDashboard.css';
-import Footer from "./footer";
-
 
 const ClinicDashboard = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -11,7 +9,7 @@ const ClinicDashboard = () => {
   const [unreadNotifications, setUnreadNotifications] = useState(3);
   const [showUserMenu, setShowUserMenu] = useState(false);
   
-  // Simulate live patient data with random fluctuations
+  // Simulate live patient data
   const generateLivePatients = () => {
     const basePatients = [
       { id: 'P-10042', name: 'Atharv Mule', age: 20, department: 'General Medicine', status: 'Active', lastVisit: '03/05/2024', nextAppointment: '04/05/2025' },
@@ -20,9 +18,8 @@ const ClinicDashboard = () => {
       { id: 'P-10115', name: 'Shreyas Mulavekar', age: 28, department: 'Dentistry', status: 'Active', lastVisit: '03/12/2025', nextAppointment: '06/12/2025' }
     ];
     
-    // Add some random fluctuation to simulate real data
     return basePatients.map(patient => {
-      const randomChange = Math.floor(Math.random() * 3) - 1; // -1, 0, or 1
+      const randomChange = Math.floor(Math.random() * 3) - 1;
       return {
         ...patient,
         age: patient.age + randomChange,
@@ -45,7 +42,7 @@ const ClinicDashboard = () => {
     currentStatus: 'In Consultation'
   };
 
-  // Simulate live appointment data with random status changes
+  // Simulate live appointment data
   const generateLiveAppointments = () => {
     const baseAppointments = [
       { id: 'A-2042', patient: 'Olivia Roberts', department: 'General Medicine', date: '03/12/2025', time: '10:30 AM', status: 'Confirmed', reason: 'Follow-up' },
@@ -55,11 +52,10 @@ const ClinicDashboard = () => {
       { id: 'A-2126', patient: 'Sophia Adams', department: 'General Medicine', date: '03/13/2025', time: '3:30 PM', status: 'Waiting', reason: 'Check-up' },
     ];
     
-    // Simulate status changes based on current time
     const now = new Date();
     return baseAppointments.map(apt => {
       const aptTime = new Date(`${apt.date} ${apt.time}`);
-      const timeDiff = (aptTime - now) / (1000 * 60); // difference in minutes
+      const timeDiff = (aptTime - now) / (1000 * 60);
       
       let newStatus = apt.status;
       if (timeDiff < -60) newStatus = 'Completed';
@@ -75,7 +71,6 @@ const ClinicDashboard = () => {
 
   const [appointments, setAppointments] = useState(generateLiveAppointments());
   
-  // Simulate live stats data
   const [stats, setStats] = useState({
     totalPatients: 247,
     todayAppointments: { completed: 4, remaining: 4, total: 8 },
@@ -83,7 +78,6 @@ const ClinicDashboard = () => {
     clinicStatus: 'Open'
   });
 
-  // Mock data for charts with live fluctuations
   const [patientVisitData, setPatientVisitData] = useState([
     { month: 'Jan', visits: 125, newPatients: 18 },
     { month: 'Feb', visits: 148, newPatients: 22 },
@@ -96,7 +90,6 @@ const ClinicDashboard = () => {
     { name: 'Dentistry', value: 11 }
   ]);
 
-  // Update the current date every minute and data every 30 seconds
   useEffect(() => {
     const dateTimer = setInterval(() => {
       setCurrentDate(new Date());
@@ -106,7 +99,6 @@ const ClinicDashboard = () => {
       setPatients(generateLivePatients());
       setAppointments(generateLiveAppointments());
       
-      // Update stats with small random fluctuations
       setStats(prev => ({
         ...prev,
         totalPatients: prev.totalPatients + Math.floor(Math.random() * 3) - 1,
@@ -120,14 +112,12 @@ const ClinicDashboard = () => {
         todayRevenue: prev.todayRevenue + (Math.floor(Math.random() * 50) - 10)
       }));
       
-      // Update chart data with small fluctuations
       setPatientVisitData(prev => prev.map(item => ({
         ...item,
         visits: item.visits + (Math.floor(Math.random() * 5) - 2),
         newPatients: item.newPatients + (Math.random() > 0.8 ? 1 : 0)
       })));
       
-      // Occasionally add a new notification
       if (Math.random() > 0.9) {
         const newNotif = {
           id: Date.now(),
@@ -153,7 +143,6 @@ const ClinicDashboard = () => {
     };
   }, []);
 
-  // Initialize notifications
   useEffect(() => {
     setNotifications([
       {
@@ -205,7 +194,6 @@ const ClinicDashboard = () => {
   };
 
   const handleNotificationClick = () => {
-    // Mark all notifications as read when bell is clicked
     setNotifications(prev => 
       prev.map(notif => ({ ...notif, read: true }))
     );
@@ -219,7 +207,6 @@ const ClinicDashboard = () => {
       )
     );
     
-    // Add a notification about the check-in
     const appointment = appointments.find(apt => apt.id === appointmentId);
     const newNotif = {
       id: Date.now(),
@@ -239,7 +226,6 @@ const ClinicDashboard = () => {
       )
     );
     
-    // Update stats
     setStats(prev => ({
       ...prev,
       todayAppointments: {
@@ -254,15 +240,14 @@ const ClinicDashboard = () => {
 
   const handleViewAllAppointments = () => {
     setActiveTab('appointments');
-    // Scroll to the appointments section if needed
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleLogout = () => {
-    // Implement logout functionality here
     alert('Logging out...');
-    // In a real application, you would handle session termination here
+    window.location.href = '/Home.js'; // Redirects to homepage
   };
+  
 
   return (
     <div className="clinic-container">
@@ -293,46 +278,11 @@ const ClinicDashboard = () => {
             {!sidebarCollapsed && <span>Patients</span>}
           </div>
           <div 
-            className={`menu-item ${activeTab === 'doctor' ? 'active' : ''}`}
-            onClick={() => setActiveTab('doctor')}
-          >
-            <i className="icon">👨‍⚕</i> 
-            {!sidebarCollapsed && <span>Doctor</span>}
-          </div>
-          <div 
             className={`menu-item ${activeTab === 'appointments' ? 'active' : ''}`}
             onClick={() => setActiveTab('appointments')}
           >
             <i className="icon">📅</i> 
             {!sidebarCollapsed && <span>Appointments</span>}
-          </div>
-          <div 
-            className={`menu-item ${activeTab === 'departments' ? 'active' : ''}`}
-            onClick={() => setActiveTab('departments')}
-          >
-            <i className="icon">🏥</i> 
-            {!sidebarCollapsed && <span>Departments</span>}
-          </div>
-          <div 
-            className={`menu-item ${activeTab === 'billing' ? 'active' : ''}`}
-            onClick={() => setActiveTab('billing')}
-          >
-            <i className="icon">💲</i> 
-            {!sidebarCollapsed && <span>Billing</span>}
-          </div>
-          <div 
-            className={`menu-item ${activeTab === 'reports' ? 'active' : ''}`}
-            onClick={() => setActiveTab('reports')}
-          >
-            <i className="icon">📝</i> 
-            {!sidebarCollapsed && <span>Reports</span>}
-          </div>
-          <div 
-            className={`menu-item ${activeTab === 'settings' ? 'active' : ''}`}
-            onClick={() => setActiveTab('settings')}
-          >
-            <i className="icon">⚙</i> 
-            {!sidebarCollapsed && <span>Settings</span>}
           </div>
         </div>
       </div>
@@ -740,114 +690,6 @@ const ClinicDashboard = () => {
             </div>
           )}
           
-          {activeTab === 'doctor' && (
-            <div className="module-content">
-              <div className="module-header">
-                <h2>Doctor Profile</h2>
-                <div className="action-buttons">
-                  <button className="action-button secondary">Edit Profile</button>
-                  <button className="action-button primary">Set Schedule</button>
-                </div>
-                </div>
-              
-              <div className="doctor-profile-details">
-                <div className="doctor-profile-card">
-                  <div className="doctor-avatar-large">
-                    <span>Dr</span>
-                  </div>
-                  <div className="doctor-info-section">
-                    <h3>{doctor.name}</h3>
-                    <p className="doctor-id">ID: {doctor.id}</p>
-                    
-                    <div className="doctor-info-grid">
-                      <div className="info-item">
-                        <span className="info-label">Specialization:</span>
-                        <span className="info-value">{doctor.specialization}</span>
-                      </div>
-                      <div className="info-item">
-                        <span className="info-label">Experience:</span>
-                        <span className="info-value">{doctor.experience}</span>
-                      </div>
-                      <div className="info-item">
-                        <span className="info-label">Availability:</span>
-                        <span className="info-value">{doctor.availability}</span>
-                      </div>
-                      <div className="info-item">
-                        <span className="info-label">Current Status:</span>
-                        <span className={`info-value status-${doctor.currentStatus.toLowerCase().replace(' ', '-')}`}>
-                          {doctor.currentStatus}
-                        </span>
-                      </div>
-                      <div className="info-item">
-                        <span className="info-label">Contact:</span>
-                        <span className="info-value">{doctor.contact}</span>
-                      </div>
-                      <div className="info-item">
-                        <span className="info-label">Email:</span>
-                        <span className="info-value">{doctor.email}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="doctor-stats-section">
-                  <div className="stats-card">
-                    <h4>Appointments Today</h4>
-                    <div className="stats-value">8</div>
-                    <div className="stats-label">3 completed</div>
-                  </div>
-                  <div className="stats-card">
-                    <h4>Patients This Week</h4>
-                    <div className="stats-value">24</div>
-                    <div className="stats-label">5 new patients</div>
-                  </div>
-                  <div className="stats-card">
-                    <h4>Prescriptions</h4>
-                    <div className="stats-value">16</div>
-                    <div className="stats-label">4 pending</div>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="doctor-schedule-section">
-                <h3>Upcoming Appointments</h3>
-                <div className="appointment-list">
-                  {appointments.slice(0, 5).map(appointment => (
-                    <div key={appointment.id} className="appointment-item">
-                      <div className="appointment-time">{appointment.time}</div>
-                      <div className="appointment-info">
-                        <div className="appointment-patient">{appointment.patient}</div>
-                        <div className="appointment-department">{appointment.department}</div>
-                        <div className="appointment-reason">{appointment.reason}</div>
-                      </div>
-                      <div className={`appointment-status ${getStatusClass(appointment.status)}`}>
-                        {appointment.status}
-                      </div>
-                      <div className="appointment-actions">
-                        {appointment.status === 'Waiting' && (
-                          <button 
-                            className="action-button small"
-                            onClick={() => handleCheckIn(appointment.id)}
-                          >
-                            Check In
-                          </button>
-                        )}
-                        {appointment.status === 'In Progress' && (
-                          <button 
-                            className="action-button small"
-                            onClick={() => handleCompleteAppointment(appointment.id)}
-                          >
-                            Complete
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-          
           {activeTab === 'appointments' && (
             <div className="module-content">
               <div className="module-header">
@@ -957,172 +799,6 @@ const ClinicDashboard = () => {
               </div>
             </div>
           )}
-          
-          {activeTab === 'departments' && (
-            <div className="module-content">
-              <div className="module-header">
-                <h2>Department Management</h2>
-                <div className="action-buttons">
-                  <button className="action-button primary">+ Add Department</button>
-                </div>
-              </div>
-              
-              <div className="department-cards">
-                {departmentDistributionData.map((dept, index) => (
-                  <div key={index} className="department-card">
-                    <div className="department-icon">
-                      {dept.name === 'General Medicine' ? '🩺' : 
-                       dept.name === 'Pediatrics' ? '👶' : '🦷'}
-                    </div>
-                    <h3>{dept.name}</h3>
-                    <div className="department-stats">
-                      <div className="stat-item">
-                        <span className="stat-value">12</span>
-                        <span className="stat-label">Doctors</span>
-                      </div>
-                      <div className="stat-item">
-                        <span className="stat-value">{dept.value}%</span>
-                        <span className="stat-label">Patients</span>
-                      </div>
-                    </div>
-                    <button className="action-button small">View Details</button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-          
-          {activeTab === 'billing' && (
-            <div className="module-content">
-              <div className="module-header">
-                <h2>Billing & Payments</h2>
-                <div className="action-buttons">
-                  <button className="action-button secondary">Generate Report</button>
-                  <button className="action-button primary">+ New Invoice</button>
-                </div>
-              </div>
-              
-              <div className="billing-stats">
-                <div className="billing-stat-card">
-                  <h3>Today's Revenue</h3>
-                  <div className="stat-amount">${stats.todayRevenue.toLocaleString()}</div>
-                  <div className="stat-change positive">+8.5% from yesterday</div>
-                </div>
-                <div className="billing-stat-card">
-                  <h3>Monthly Revenue</h3>
-                  <div className="stat-amount">$24,850</div>
-                  <div className="stat-change positive">+12.3% from last month</div>
-                </div>
-                <div className="billing-stat-card">
-                  <h3>Outstanding Payments</h3>
-                  <div className="stat-amount">$3,250</div>
-                  <div className="stat-change negative">5 unpaid invoices</div>
-                </div>
-              </div>
-              
-              <div className="recent-transactions">
-                <h3>Recent Transactions</h3>
-                <div className="transaction-list">
-                  {[1, 2, 3, 4, 5].map(item => (
-                    <div key={item} className="transaction-item">
-                      <div className="transaction-info">
-                        <div className="transaction-id">INV-2025-00{item}</div>
-                        <div className="transaction-patient">Patient {item}</div>
-                        <div className="transaction-date">03/{10+item}/2025</div>
-                      </div>
-                      <div className="transaction-amount">${(150 + item * 50).toFixed(2)}</div>
-                      <div className="transaction-status paid">Paid</div>
-                      <button className="icon-button">📄</button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-          
-          {activeTab === 'reports' && (
-            <div className="module-content">
-              <div className="module-header">
-                <h2>Reports & Analytics</h2>
-                <div className="action-buttons">
-                  <button className="action-button secondary">Export All</button>
-                  <button className="action-button primary">Generate Custom Report</button>
-                </div>
-              </div>
-              
-              <div className="report-types">
-                <div className="report-type-card">
-                  <div className="report-icon">📊</div>
-                  <h3>Patient Statistics</h3>
-                  <p>Detailed reports on patient demographics and visit patterns</p>
-                  <button className="action-button small">Generate</button>
-                </div>
-                <div className="report-type-card">
-                  <div className="report-icon">💰</div>
-                  <h3>Financial Reports</h3>
-                  <p>Revenue, expenses, and profitability analysis</p>
-                  <button className="action-button small">Generate</button>
-                </div>
-                <div className="report-type-card">
-                  <div className="report-icon">🏥</div>
-                  <h3>Department Performance</h3>
-                  <p>Efficiency and utilization metrics by department</p>
-                  <button className="action-button small">Generate</button>
-                </div>
-              </div>
-            </div>
-          )}
-          
-          {activeTab === 'settings' && (
-            <div className="module-content">
-              <div className="module-header">
-                <h2>System Settings</h2>
-              </div>
-              
-              <div className="settings-tabs">
-                <div className="settings-sidebar">
-                  <div className="settings-menu-item active">Clinic Information</div>
-                  <div className="settings-menu-item">User Accounts</div>
-                  <div className="settings-menu-item">Appointment Settings</div>
-                  <div className="settings-menu-item">Billing Configuration</div>
-                  <div className="settings-menu-item">Notification Preferences</div>
-                  <div className="settings-menu-item">Backup & Security</div>
-                </div>
-                
-                <div className="settings-content">
-                  <h3>Clinic Information</h3>
-                  <form className="settings-form">
-                    <div className="form-group">
-                      <label>Clinic Name</label>
-                      <input type="text" value="ClinicEase Medical Center" />
-                    </div>
-                    <div className="form-group">
-                      <label>Address</label>
-                      <input type="text" value="123 Healthcare Ave, Medical City" />
-                    </div>
-                    <div className="form-row">
-                      <div className="form-group">
-                        <label>Contact Number</label>
-                        <input type="text" value="+1 (555) 987-6543" />
-                      </div>
-                      <div className="form-group">
-                        <label>Email</label>
-                        <input type="email" value="info@clinicease.com" />
-                      </div>
-                    </div>
-                    <div className="form-group">
-                      <label>Operating Hours</label>
-                      <textarea>Monday-Friday: 8:00 AM - 6:00 PM\nSaturday: 9:00 AM - 2:00 PM\nSunday: Closed</textarea>
-                    </div>
-                    <div className="form-actions">
-                      <button type="button" className="action-button secondary">Cancel</button>
-                      <button type="submit" className="action-button primary">Save Changes</button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
         
         <footer className="clinic-footer">
@@ -1133,7 +809,6 @@ const ClinicDashboard = () => {
             <a href="#">Help Center</a>
           </div>
         </footer>
-        
       </div>
     </div>
   );
