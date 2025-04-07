@@ -14,6 +14,8 @@ const BookAppointments = () => {
 	const [phoneNumber, setPhoneNumber] = useState("");
 	const [problem, setProblem] = useState("");
 
+	const BASE_URL = process.env.REACT_APP_BASE_URL;
+	
 	const onMakeAppointment = async (e) => {
 		const ud = localStorage.getItem("user");
 		let userData = JSON.parse(ud);
@@ -28,7 +30,7 @@ const BookAppointments = () => {
 		}
 
 		await Axios.post(
-			"http://localhost:5001/user/makeApt",
+			`${BASE_URL}/user/makeApt`,
 			{
 				...appointment,
 				pid: userData._id,
